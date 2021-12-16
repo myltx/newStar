@@ -15,6 +15,8 @@ let stars = [];
 let lastTime = ref(0);
 let deltaTime = ref(0);
 let timer = ref(0);
+let img = ref(new Image());
+img.value.src = BgImg;
 
 onMounted(() => {
   initCanvas();
@@ -24,7 +26,6 @@ onMounted(() => {
     stars.push(obj);
     stars[i].init();
   }
-  lastTime.value = Date.now();
   loop();
 });
 
@@ -42,14 +43,13 @@ function loop() {
   deltaTime.value = nowTime - lastTime.value;
   lastTime.value = Date.now();
   timer.value += deltaTime.value;
-  if (timer.value > 160) {
-    // drawBg();
+  if (timer.value > 260) {
+    drawBg();
     drawStar();
     timer.value = 0;
   }
 }
 function drawStar() {
-  ctx.value.clearRect(0, 0, w.value, h.value);
   // 向画布绘制星星
   for (let i = 0; i < stars.length; i++) {
     const star = stars[i];
@@ -70,8 +70,8 @@ class Star {
   init() {
     // Math.floor() 返回小于或等于一个给定数字的最大整数
     this.x = Math.floor(Math.random() * w.value);
-    this.y = Math.floor(Math.random() * h.value);
-    this.start = Math.floor(Math.random() * 10);
+    this.y = Math.floor(Math.random() * h.value - 350);
+    this.start = Math.floor(Math.random() * 5);
     this.xNum = Math.random() * 3 - 1.5;
     this.yNum = Math.random() * 3 - 1.5;
   }
@@ -82,7 +82,12 @@ class Star {
     this.start += 1;
     this.start %= 5;
     // 当 x 或 y < 0 时 或 x > w 或 y < h 时判定星星已经超出了区域
-    if (this.x < 0 || this.y < 0 || this.x > w.value || this.y > h.value) {
+    if (
+      this.x < 0 ||
+      this.y < 0 ||
+      this.x > w.value ||
+      this.y > h.value - 350
+    ) {
       this.init();
     }
   }
@@ -109,11 +114,7 @@ class Star {
 }
 // 绘制背景
 function drawBg() {
-  let img = new Image();
-  img.src = BgImg;
-  img.onload = () => {
-    ctx.value.drawImage(img, 0, 0, w.value, h.value);
-  };
+  ctx.value.drawImage(img.value, 0, 0, w.value, h.value);
 }
 </script>
 
